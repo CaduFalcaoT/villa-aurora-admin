@@ -9,10 +9,10 @@ import {
 
 export default function SideBar() {
   const navLinkClass = ({ isActive }) =>
-    `group flex items-center gap-[0.8rem] ${isActive ? "text-gray-800 bg-gray-50" : "text-gray-600"} text-xl font-medium py-[1.2rem] px-[2.4rem] transition-all durantion-300 rounded-sm hover:text-gray-800 hover:bg-gray-50`;
+    `group flex items-center gap-[0.8rem] ${isActive ? "text-gray-800 bg-gray-50" : "text-gray-600"} text-xl font-medium py-[1.2rem] px-[3.6rem] transition-all durantion-300 rounded-sm hover:text-gray-800 hover:bg-gray-50`;
 
   return (
-    <aside className="flex h-screen flex-col items-center gap-[1.6rem] border-2 border-solid border-gray-100 px-[2.4rem] py-[3.2rem]">
+    <aside className="flex h-screen flex-col items-center gap-[1.6rem] border-2 border-solid border-gray-100 px-[1.2rem] py-[3.2rem]">
       <img
         src="/Villa-Aurora.png"
         alt="Logo"
