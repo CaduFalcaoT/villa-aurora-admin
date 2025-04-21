@@ -1,40 +1,22 @@
-import styled from "styled-components";
+export default function CabinRow({ data }) {
+  const { name, maxCapacity, regularPrice, discount, image } = data;
 
-const TableRow = styled.div`
-  display: grid;
-  grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
-  column-gap: 2.4rem;
-  align-items: center;
-  padding: 1.4rem 2.4rem;
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-`;
-
-const Img = styled.img`
-  display: block;
-  width: 6.4rem;
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
-  object-position: center;
-  transform: scale(1.5) translateX(-7px);
-`;
-
-const Cabin = styled.div`
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: var(--color-grey-600);
-  font-family: "Sono";
-`;
-
-const Price = styled.div`
-  font-family: "Sono";
-  font-weight: 600;
-`;
-
-const Discount = styled.div`
-  font-family: "Sono";
-  font-weight: 500;
-  color: var(--color-green-700);
-`;
+  return (
+    <div
+      role="row"
+      className="relative grid grid-cols-[116px_1.8fr_2.2fr_1fr_1fr_1fr] items-center gap-x-6 border-b-2 border-gray-100 py-6 pr-10 font-semibold text-gray-600 uppercase not-last:border-b"
+    >
+      <img
+        src={image}
+        alt="cabin image"
+        className="absolute flex aspect-[3/2] h-full object-cover object-center"
+      />
+      <div></div>
+      <div className="font-sono font-bold text-gray-600">{name}</div>
+      <div>{maxCapacity}</div>
+      <div className="font-semibold">{regularPrice}</div>
+      <div className="font-medium text-green-700">{discount}</div>
+      <button className="cursor-pointer text-red-400">Remove</button>
+    </div>
+  );
+}

@@ -8,7 +8,7 @@ export default function AppLayout() {
       <SideBar />
       <span className="flex w-full flex-col">
         <Header>HEADER</Header>
-        <main className="flex h-full w-full bg-gray-50">
+        <main className="flex h-full w-full flex-col gap-8 bg-gray-50 p-16">
           <Outlet />
         </main>
       </span>
