@@ -41,17 +41,23 @@ async function createCabin(newCabin) {
   }
 }
 
-async function editCabin(cabin, id) {
-  let newCabin = cabin;
-  if (cabin.replaceImage) {
-    let { replaceImage, ...newCabin } = newCabin;
-    const imageName = newCabin.image[0].replace(
+async function editCabin(cabinEdited, id, oldURL) {
+  if (typeof cabinEdited.image !== "string") {
+    const oldImageName = oldURL.replace(
       `${supabaseUrl}/storage/v1/object/public/cabin-images/`,
       "",
     );
-    const { data: imageData, error: storageError } = await supabase.storage
-      .from("cabins-images")
-      .update(imageName, replaceImage);
+    const newImageName =
+      `${Math.random()}-${cabinEdited.image[0].name}`.replaceAll("/", "");
+
+    const { error: removeError } = await supabase.storage
+      .from("cabin-images")
+      .remove(oldImageName);
+    const { error: uploadError, data: imageData } = await supabase.storage
+      .from("cabin-images")
+      .upload(newImageName, cabinEdited.image[0]);
+
+    const storageError = removeError || uploadError;
 
     if (storageError) {
       console.error(storageError);
@@ -59,10 +65,13 @@ async function editCabin(cabin, id) {
         "Cabin image could not be uploaded and the cabin was not edited",
       );
     }
-    newCabin = { ...newCabin, image: imageData.fullPath };
+    cabinEdited.image = `${supabaseUrl}/storage/v1/object/public/${imageData.fullPath}`;
   }
 
-  const { error } = await supabase.from("cabins").update(newCabin).eq("id", id);
+  const { error } = await supabase
+    .from("cabins")
+    .update(cabinEdited)
+    .eq("id", id);
 
   if (error) {
     console.error(error);
@@ -72,7 +81,7 @@ async function editCabin(cabin, id) {
 
 async function deleteCabin(cabin) {
   const imageName = cabin.image.replace(
-    "https://dxbnayqyrrtdgtdiprjm.supabase.co/storage/v1/object/public/cabin-images/",
+    `${supabaseUrl}/storage/v1/object/public/cabin-images/`,
     "",
   );
 

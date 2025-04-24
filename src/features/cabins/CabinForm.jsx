@@ -1,18 +1,29 @@
 import { useForm } from "react-hook-form";
 import Button from "../../ui/Button";
 import { useCreateCabin } from "./useCreateCabin";
+import { useEditCabin } from "./useEditCabin";
 
-function CabinForm({ onClose }) {
+function CabinForm({ onClose, cabinValue = {} }) {
+  const { id: editId } = cabinValue;
+  const isEditSession = Boolean(editId);
+
   const {
     handleSubmit,
     register,
     getValues,
-    formState: { errors },
-  } = useForm();
-  const { mutate: createCabin, isPending } = useCreateCabin();
+    formState: { errors, isDirty },
+  } = useForm({ defaultValues: isEditSession ? cabinValue : {} });
+
+  const { mutate: createCabin, isPending: isPendingCreate } = useCreateCabin();
+  const { mutate: editCabin, isPending: isPendingEditing } = useEditCabin();
+
+  const isPending = isPendingCreate || isPendingEditing;
 
   function onSubmit(data) {
-    createCabin(data);
+    if (!isDirty) return onClose();
+    isEditSession
+      ? editCabin({ newCabinData: data, id: data.id, oldURL: cabinValue.image })
+      : createCabin(data);
   }
 
   return (
@@ -23,7 +34,7 @@ function CabinForm({ onClose }) {
         </label>
         <input
           id="name"
-          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-400"
+          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-200"
           {...register("name", { required: "This field is required" })}
           disabled={isPending}
         />
@@ -37,7 +48,7 @@ function CabinForm({ onClose }) {
           Maximum capacity
         </label>
         <input
-          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-400"
+          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-200"
           id="maxCapacity"
           type="number"
           min={0}
@@ -54,7 +65,7 @@ function CabinForm({ onClose }) {
           Regular price
         </label>
         <input
-          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-400"
+          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-200"
           id="regularPrice"
           type="number"
           min={0}
@@ -71,7 +82,7 @@ function CabinForm({ onClose }) {
           Discount
         </label>
         <input
-          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-400"
+          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-200"
           id="discount"
           type="number"
           min={0}
@@ -94,7 +105,7 @@ function CabinForm({ onClose }) {
           Description for website
         </label>
         <textarea
-          className="h-[8rem] w-full rounded-sm border border-gray-300 bg-white p-[0.8rem_1.2rem] shadow-sm disabled:bg-gray-400"
+          className="h-[8rem] w-full rounded-sm border border-gray-300 bg-white p-[0.8rem_1.2rem] shadow-sm disabled:bg-gray-200"
           id="description"
           defaultValue=""
           {...register("description")}
@@ -111,11 +122,13 @@ function CabinForm({ onClose }) {
         </label>
         <span className="overflow-hidden">
           <input
-            className="rounded-sm text-base transition-all duration-300 file:mr-[1.2rem] file:cursor-pointer file:rounded-sm file:border-none file:bg-indigo-600 file:p-[0.8rem_1.2rem] file:font-medium file:text-indigo-50 file:hover:bg-indigo-700 disabled:file:bg-gray-400"
+            className="rounded-sm text-base transition-all duration-300 file:mr-[1.2rem] file:cursor-pointer file:rounded-sm file:border-none file:bg-indigo-600 file:p-[0.8rem_1.2rem] file:font-medium file:text-indigo-50 file:hover:bg-indigo-700 disabled:file:opacity-70"
             id="image"
             type="file"
             accept="image/*"
-            {...register("image", { required: "This field is required" })}
+            {...register("image", {
+              required: isEditSession ? false : "This field is required",
+            })}
             disabled={isPending}
           />
         </span>
@@ -137,7 +150,7 @@ function CabinForm({ onClose }) {
           Cancel
         </Button>
         <Button type="primary" size="medium">
-          Create new cabin
+          {isEditSession ? "Edit cabin" : "Create new cabin"}
         </Button>
       </div>
     </form>
