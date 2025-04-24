@@ -6,9 +6,9 @@ export default function AppLayout() {
   return (
     <main className="flex">
       <SideBar />
-      <span className="flex w-full flex-col">
+      <span className="flex max-h-screen w-full flex-col">
         <Header>HEADER</Header>
-        <main className="flex h-full w-full flex-col gap-8 bg-gray-50 p-16">
+        <main className="flex h-full w-full flex-col gap-8 overflow-auto bg-gray-50 p-16">
           <Outlet />
         </main>
       </span>

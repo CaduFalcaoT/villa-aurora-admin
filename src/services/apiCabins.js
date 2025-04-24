@@ -66,8 +66,23 @@ async function editCabin(cabin, id) {
   }
 }
 
-async function deleteCabin(id) {
-  const { error } = await supabase.from("cabins").delete().eq("id", id);
+async function deleteCabin(cabin) {
+  const imageName = cabin.image.replace(
+    "https://dxbnayqyrrtdgtdiprjm.supabase.co/storage/v1/object/public/cabin-images//",
+    "",
+  );
+  const { error: storageError } = await supabase.storage
+    .from("cabins-images")
+    .remove([imageName]);
+
+  if (storageError) {
+    console.error(storageError);
+    throw new Error(
+      "Cabin image could not be deleted and the cabin was not deleted",
+    );
+  }
+
+  const { error } = await supabase.from("cabins").delete().eq("id", cabin.id);
 
   if (error) {
     console.error(error);
