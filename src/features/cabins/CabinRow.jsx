@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useDeleteCabin } from "./useDeleteCabin";
 import Modal from "../../ui/Modal";
 import CabinForm from "./CabinForm";
+import { useCreateCabin } from "./useCreateCabin";
 
 export default function CabinRow({ data }) {
   const { name, maxCapacity, regularPrice, discount, image } = data;
   const [showForm, setShowForm] = useState(false);
 
   const { mutate } = useDeleteCabin();
+  const { mutate: duplicate } = useCreateCabin();
 
   return (
     <>
@@ -33,6 +35,19 @@ export default function CabinRow({ data }) {
             Remove
           </button>
           <button onClick={() => setShowForm(true)}>Edit</button>
+          <button
+            onClick={() =>
+              duplicate({
+                name: `Copy of ${name}`,
+                maxCapacity,
+                regularPrice,
+                discount,
+                image,
+              })
+            }
+          >
+            Duplicate
+          </button>
         </span>
       </div>
       {showForm && (
