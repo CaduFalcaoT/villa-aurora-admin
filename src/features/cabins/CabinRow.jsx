@@ -1,5 +1,9 @@
+import { useDeleteCabin } from "./useDeleteCabin";
+
 export default function CabinRow({ data }) {
   const { name, maxCapacity, regularPrice, discount, image } = data;
+
+  const { mutate } = useDeleteCabin();
 
   return (
     <div
@@ -16,7 +20,12 @@ export default function CabinRow({ data }) {
       <div>{maxCapacity}</div>
       <div className="font-semibold">{regularPrice}</div>
       <div className="font-medium text-green-700">{discount}</div>
-      <button className="cursor-pointer text-red-400">Remove</button>
+      <button
+        className="cursor-pointer text-red-400"
+        onClick={() => mutate(data)}
+      >
+        Remove
+      </button>
     </div>
   );
 }

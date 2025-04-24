@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import Button from "../../ui/Button";
 import { useCreateCabin } from "./useCreateCabin";
 
-function CabinForm() {
+function CabinForm({ onClose }) {
   const {
     handleSubmit,
     register,
@@ -23,7 +23,7 @@ function CabinForm() {
         </label>
         <input
           id="name"
-          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm"
+          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-400"
           {...register("name", { required: "This field is required" })}
           disabled={isPending}
         />
@@ -37,7 +37,7 @@ function CabinForm() {
           Maximum capacity
         </label>
         <input
-          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm"
+          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-400"
           id="maxCapacity"
           type="number"
           min={0}
@@ -54,7 +54,7 @@ function CabinForm() {
           Regular price
         </label>
         <input
-          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm"
+          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-400"
           id="regularPrice"
           type="number"
           min={0}
@@ -71,7 +71,7 @@ function CabinForm() {
           Discount
         </label>
         <input
-          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm"
+          className="w-full rounded-sm border border-gray-300 bg-white p-[0.4rem_0.6rem] shadow-sm disabled:bg-gray-400"
           id="discount"
           type="number"
           min={0}
@@ -81,6 +81,7 @@ function CabinForm() {
               value <= getValues().regularPrice ||
               "Discount should be less than regular price",
           })}
+          defaultValue={0}
           disabled={isPending}
         />
         {errors?.discount?.message && (
@@ -92,8 +93,8 @@ function CabinForm() {
         <label htmlFor="description" className="font-medium">
           Description for website
         </label>
-        <input
-          className="h-[8rem] w-full rounded-sm border border-gray-300 bg-white p-[0.8rem_1.2rem] shadow-sm"
+        <textarea
+          className="h-[8rem] w-full rounded-sm border border-gray-300 bg-white p-[0.8rem_1.2rem] shadow-sm disabled:bg-gray-400"
           id="description"
           defaultValue=""
           {...register("description")}
@@ -110,7 +111,7 @@ function CabinForm() {
         </label>
         <span className="overflow-hidden">
           <input
-            className="rounded-sm text-base transition-all duration-300 file:mr-[1.2rem] file:cursor-pointer file:rounded-sm file:border-none file:bg-indigo-600 file:p-[0.8rem_1.2rem] file:font-medium file:text-indigo-50 file:hover:bg-indigo-700"
+            className="rounded-sm text-base transition-all duration-300 file:mr-[1.2rem] file:cursor-pointer file:rounded-sm file:border-none file:bg-indigo-600 file:p-[0.8rem_1.2rem] file:font-medium file:text-indigo-50 file:hover:bg-indigo-700 disabled:file:bg-gray-400"
             id="image"
             type="file"
             accept="image/*"
@@ -125,7 +126,14 @@ function CabinForm() {
 
       <div className="flex w-full justify-end gap-5 pt-[1.2rem]">
         {/* type is an HTML attribute! */}
-        <Button type="alert" size="medium">
+        <Button
+          type="alert"
+          size="medium"
+          onClick={(e) => {
+            e.preventDefault();
+            onClose();
+          }}
+        >
           Cancel
         </Button>
         <Button type="primary" size="medium">

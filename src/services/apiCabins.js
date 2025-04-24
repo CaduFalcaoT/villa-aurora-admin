@@ -1,4 +1,4 @@
-import supabase from "./supabase";
+import supabase, { supabaseUrl } from "./supabase";
 
 async function getCabins() {
   let { data, error } = await supabase.from("cabins").select("*");
@@ -12,13 +12,14 @@ async function getCabins() {
 }
 
 async function createCabin(newCabin) {
-  const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
+  const imageName = `${Math.random()}-${newCabin.image[0].name}`.replaceAll(
     "/",
     "",
   );
+
   const { data: imageData, error: storageError } = await supabase.storage
-    .from("cabins-images")
-    .upload(imageName, newCabin.image);
+    .from("cabin-images")
+    .upload(imageName, newCabin.image[0]);
 
   if (storageError) {
     console.error(storageError);
@@ -27,9 +28,12 @@ async function createCabin(newCabin) {
     );
   }
 
-  const { error } = await supabase
-    .from("cabins")
-    .insert([{ ...newCabin, image: imageData.fullPath }]);
+  const { error } = await supabase.from("cabins").insert([
+    {
+      ...newCabin,
+      image: `${supabaseUrl}/storage/v1/object/public/${imageData.fullPath}`,
+    },
+  ]);
 
   if (error) {
     console.error(error);
@@ -41,13 +45,13 @@ async function editCabin(cabin, id) {
   let newCabin = cabin;
   if (cabin.replaceImage) {
     let { replaceImage, ...newCabin } = newCabin;
-    const imageName = newCabin.image.replace(
-      "https://dxbnayqyrrtdgtdiprjm.supabase.co/storage/v1/object/public/cabin-images//",
+    const imageName = newCabin.image[0].replace(
+      `${supabaseUrl}/storage/v1/object/public/cabin-images/`,
       "",
     );
     const { data: imageData, error: storageError } = await supabase.storage
       .from("cabins-images")
-      .upload(imageName, replaceImage);
+      .update(imageName, replaceImage);
 
     if (storageError) {
       console.error(storageError);
@@ -68,11 +72,12 @@ async function editCabin(cabin, id) {
 
 async function deleteCabin(cabin) {
   const imageName = cabin.image.replace(
-    "https://dxbnayqyrrtdgtdiprjm.supabase.co/storage/v1/object/public/cabin-images//",
+    "https://dxbnayqyrrtdgtdiprjm.supabase.co/storage/v1/object/public/cabin-images/",
     "",
   );
+
   const { error: storageError } = await supabase.storage
-    .from("cabins-images")
+    .from("cabin-images")
     .remove([imageName]);
 
   if (storageError) {

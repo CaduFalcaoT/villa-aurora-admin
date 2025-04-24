@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteCabin } from "../../services/apiCabins";
-import toast from "react-hot-toast/headless";
+import toast from "react-hot-toast";
 
 function useDeleteCabin() {
   const queryClient = useQueryClient();
