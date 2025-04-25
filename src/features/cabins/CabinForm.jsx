@@ -3,7 +3,7 @@ import Button from "../../ui/Button";
 import { useCreateCabin } from "./useCreateCabin";
 import { useEditCabin } from "./useEditCabin";
 
-function CabinForm({ onClose, cabinValue = {} }) {
+function CabinForm({ onCloseModal, cabinValue = {} }) {
   const { id: editId } = cabinValue;
   const isEditSession = Boolean(editId);
 
@@ -20,10 +20,21 @@ function CabinForm({ onClose, cabinValue = {} }) {
   const isPending = isPendingCreate || isPendingEditing;
 
   function onSubmit(data) {
-    if (!isDirty) return onClose();
+    if (!isDirty) return onCloseModal();
     isEditSession
-      ? editCabin({ newCabinData: data, id: data.id, oldURL: cabinValue.image })
-      : createCabin(data);
+      ? editCabin(
+          { newCabinData: data, id: data.id, oldURL: cabinValue.image },
+          {
+            onSuccess: () => {
+              onCloseModal();
+            },
+          },
+        )
+      : createCabin(data, {
+          onSuccess: () => {
+            onCloseModal();
+          },
+        });
   }
 
   return (
@@ -144,12 +155,12 @@ function CabinForm({ onClose, cabinValue = {} }) {
           size="medium"
           onClick={(e) => {
             e.preventDefault();
-            onClose();
+            onCloseModal();
           }}
         >
           Cancel
         </Button>
-        <Button type="primary" size="medium">
+        <Button type="primary" size="medium" btnType="submit">
           {isEditSession ? "Edit cabin" : "Create new cabin"}
         </Button>
       </div>

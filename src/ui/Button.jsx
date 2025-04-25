@@ -1,9 +1,15 @@
-export default function Button({ size, type, children, onClick }) {
+export default function Button({
+  size,
+  type,
+  children,
+  onClick,
+  btnType = "button",
+}) {
   const sizes = {
     small:
       "text-[1.2rem py-[0.4rem] px-[0.8rem] uppercase font-semibold text-center",
     medium: "text-lg py-3 px-6 font-medium",
-    large: "text-xl py-4 px-6 font-medium",
+    large: "text-xl py-4 px-12 font-medium",
   };
 
   const variations = {
@@ -18,6 +24,7 @@ export default function Button({ size, type, children, onClick }) {
     <button
       className={`${sizes[size]} ${variations[type]} cursor-pointer rounded-sm transition-all duration-300`}
       onClick={onClick}
+      type={btnType}
     >
       {children}
     </button>
