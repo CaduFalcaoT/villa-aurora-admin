@@ -8,7 +8,7 @@ export default function CabinTable() {
 
   return isLoading ? (
     <div className="flex h-full w-full items-center justify-center">
-      <DotSpinner size="56" speed="0.9" color="#232323" />
+      <DotSpinner size="56" speed="0.9" color="#4f39f6" />
     </div>
   ) : isError ? (
     <p className="flex h-full w-full items-center justify-center text-center text-lg text-red-400">

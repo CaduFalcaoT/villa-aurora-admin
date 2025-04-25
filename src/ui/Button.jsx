@@ -7,7 +7,7 @@ export default function Button({ size, type, children, onClick }) {
   };
 
   const variations = {
-    primary: "text-blue-50 bg-blue-600 hover:bg-blue-700",
+    primary: "text-indigo-50 bg-indigo-600 hover:bg-indigo-700",
     secondary:
       "bg-white border-2 border-solid border-gray-200 hover:bg-gray-100",
     alert: "hover:text-red-600 border hover:border-red-400 ",
