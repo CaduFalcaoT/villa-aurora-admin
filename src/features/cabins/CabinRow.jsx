@@ -1,14 +1,15 @@
-import { useState } from "react";
 import { useDeleteCabin } from "./useDeleteCabin";
 import Modal from "../../ui/Modal";
 import CabinForm from "./CabinForm";
 import { useCreateCabin } from "./useCreateCabin";
+import { HiMiniSquare2Stack, HiPencil, HiTrash } from "react-icons/hi2";
+import ConfirmDelete from "../../ui/ConfirmDelete";
+import { formatCurrency } from "../../utils/helpers";
 
 export default function CabinRow({ data }) {
   const { name, maxCapacity, regularPrice, discount, image } = data;
-  const [showForm, setShowForm] = useState(false);
 
-  const { mutate } = useDeleteCabin();
+  const { mutate: del, isPending: isDeleting } = useDeleteCabin();
   const { mutate: duplicate } = useCreateCabin();
 
   return (
@@ -20,22 +21,17 @@ export default function CabinRow({ data }) {
         <img
           src={image}
           alt="cabin image"
-          className="absolute flex aspect-[3/2] h-full object-cover object-center"
+          className="absolute top-1/2 flex aspect-[3/2] h-[90%] -translate-y-1/2 object-cover object-center"
         />
         <div></div>
         <div className="font-sono font-bold text-gray-600">{name}</div>
-        <div>{maxCapacity}</div>
-        <div className="font-semibold">{regularPrice}</div>
-        <div className="font-medium text-green-700">{discount}</div>
+        <div className="text-base font-medium normal-case">{`Fits up to ${maxCapacity} guests`}</div>
+        <div className="font-semibold">{formatCurrency(regularPrice)}</div>
+        <div className="font-medium text-green-700">
+          {formatCurrency(discount)}
+        </div>
         <span className="flex gap-4">
-          <button
-            className="cursor-pointer text-red-400"
-            onClick={() => mutate(data)}
-          >
-            Remove
-          </button>
-          <button onClick={() => setShowForm(true)}>Edit</button>
-          <button
+          <HiMiniSquare2Stack
             onClick={() =>
               duplicate({
                 name: `Copy of ${name}`,
@@ -45,16 +41,27 @@ export default function CabinRow({ data }) {
                 image,
               })
             }
-          >
-            Duplicate
-          </button>
+          />
+          <Modal>
+            <Modal.Open opens="edit">
+              <HiPencil />
+            </Modal.Open>
+            <Modal.Window name="edit">
+              <CabinForm cabinValue={data} />
+            </Modal.Window>
+            <Modal.Open>
+              <HiTrash />
+            </Modal.Open>
+            <Modal.Window>
+              <ConfirmDelete
+                resourceName="cabins"
+                disabled={isDeleting}
+                onConfirm={() => del(data)}
+              />
+            </Modal.Window>
+          </Modal>
         </span>
       </div>
-      {showForm && (
-        <Modal onClose={() => setShowForm(false)}>
-          <CabinForm onClose={() => setShowForm(false)} cabinValue={data} />
-        </Modal>
-      )}
     </>
   );
 }
