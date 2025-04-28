@@ -29,6 +29,25 @@ async function createCabin(newCabin) {
       );
     }
     newCabin.image = `${supabaseUrl}/storage/v1/object/public/${imageData.fullPath}`;
+  } else {
+    const oldImageName = newCabin.image.replace(
+      `${supabaseUrl}/storage/v1/object/public/cabin-images/`,
+      "",
+    );
+
+    const newImageName = `${Math.random()}-copy-of-${newCabin.name.replaceAll(" ", "-")}`;
+
+    const { data: imageData, error: storageError } = await supabase.storage
+      .from("cabin-images")
+      .copy(oldImageName, newImageName);
+
+    if (storageError) {
+      console.error(storageError);
+      throw new Error(
+        "Cabin image could not be copied and the cabin was not created",
+      );
+    }
+    newCabin.image = `${supabaseUrl}/storage/v1/object/public/${imageData.path}`;
   }
 
   const { error } = await supabase.from("cabins").insert([newCabin]);
