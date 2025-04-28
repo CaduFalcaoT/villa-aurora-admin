@@ -5,9 +5,10 @@ import { useCreateCabin } from "./useCreateCabin";
 import { HiMiniSquare2Stack, HiPencil, HiTrash } from "react-icons/hi2";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import { formatCurrency } from "../../utils/helpers";
+import Menu from "../../ui/Menu";
 
 export default function CabinRow({ data }) {
-  const { name, maxCapacity, regularPrice, discount, image } = data;
+  const { name, maxCapacity, regularPrice, discount, image, id } = data;
 
   const { mutate: del, isPending: isDeleting } = useDeleteCabin();
   const { mutate: duplicate } = useCreateCabin();
@@ -30,29 +31,39 @@ export default function CabinRow({ data }) {
         <div className="font-medium text-green-700">
           {formatCurrency(discount)}
         </div>
-        <span className="flex gap-4">
-          <HiMiniSquare2Stack
-            onClick={() =>
-              duplicate({
-                name: `Copy of ${name}`,
-                maxCapacity,
-                regularPrice,
-                discount,
-                image,
-              })
-            }
-          />
+        <span className="flex justify-end">
           <Modal>
-            <Modal.Open opens="edit">
-              <HiPencil />
-            </Modal.Open>
+            <Menu>
+              <Menu.Toggle id={id} />
+              <Menu.List id={id}>
+                <Menu.Button
+                  icon={<HiMiniSquare2Stack />}
+                  onClick={() =>
+                    duplicate({
+                      name: `Copy of ${name}`,
+                      maxCapacity,
+                      regularPrice,
+                      discount,
+                      image,
+                    })
+                  }
+                >
+                  Copy
+                </Menu.Button>
+                <Modal.Open opens="edit">
+                  <Menu.Button icon={<HiPencil />}>Edit</Menu.Button>
+                </Modal.Open>
+                <Modal.Open opens="delete">
+                  <Menu.Button icon={<HiTrash />}>Delete</Menu.Button>
+                </Modal.Open>
+              </Menu.List>
+            </Menu>
+
             <Modal.Window name="edit">
               <CabinForm cabinValue={data} />
             </Modal.Window>
-            <Modal.Open>
-              <HiTrash />
-            </Modal.Open>
-            <Modal.Window>
+
+            <Modal.Window name="delete">
               <ConfirmDelete
                 resourceName="cabins"
                 disabled={isDeleting}
